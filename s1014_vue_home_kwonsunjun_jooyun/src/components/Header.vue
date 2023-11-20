@@ -35,7 +35,12 @@
             </ul>
           </div>
         </menu>
-        <img src="../assets/logo.jpg" class="w-[10rem] h-[3rem] object-cover" alt="" />
+        <img
+          src="../assets/logo.jpg"
+          class="w-[10rem] h-[3rem] object-cover"
+          alt=""
+          @click="goHome()"
+        />
 
         <div class="">
           <button
@@ -46,7 +51,7 @@
           >
             로그인
           </button>
-          <button id="loginBtn" onclick="loginModal.showModal()" class="btn btn-neutral btn-sm">
+          <button id="signInBtn" onclick="signInModal.showModal()" class="btn btn-neutral btn-sm">
             회원가입
           </button>
         </div>
@@ -77,7 +82,7 @@
             />
             <div class="flex gap-[10px] p-4 pl-0 pb-0">
               <button class="btn w-1/2" @click="moveSign">회원가입</button>
-              <button class="btn btn-primary w-1/2" onclick="login()">로그인</button>
+              <button class="btn btn-primary w-1/2" @click="login">로그인</button>
             </div>
           </div>
         </dialog>
@@ -139,7 +144,8 @@
   </div>
 </template>
 <script setup>
-// router.push('/signin')
+import router from '../router'
+
 const moveSign = () => {
   let loginModal = document.querySelector('#loginModal')
   loginModal.close()
@@ -150,7 +156,17 @@ const moveSign = () => {
 
 const signIn = () => {
   let signInModal = document.querySelector('#signInModal')
-  signInModal.close()
+  signInModal.showModal()
+}
+
+const goHome = () => {
+  router.push('/')
+}
+
+const login = () => {
+  let loginModal = document.querySelector('#loginModal')
+  loginModal.close()
+  
 }
 </script>
 <style lang=""></style>

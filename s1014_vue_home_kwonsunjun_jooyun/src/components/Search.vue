@@ -140,7 +140,7 @@ const updateSearchResult = (aparts) => {
     }
     for (key in aparts) {
       const item = aparts[key]
-
+      console.log(item)
       const address = `${item['도로명']['#text']} ${item['도로명건물본번호코드']['#text']}`
 
       geocoder.addressSearch(address, function (result, status) {
@@ -200,21 +200,18 @@ const updateSearchResult = (aparts) => {
 
     detailButton.type = 'button'
     detailButton.className = 'input input-bordered w-full max-w-md'
-    detailButton.value = '상세보기'
-    detailButton.onclick = showDetail
-    // detailButton.onclick = showDetail()
+    detailButton.textContent = name
+
+    detailButton.value = '리뷰보러가기'
+    detailButton.onclick = () => {
+      router.push({ name: 'detail', params: { name: detailButton.textContent } })
+    }
+
     cardbody.append(detailButton)
     card.appendChild(cardbody)
 
     document.getElementById('search-result').appendChild(card)
   }
-}
-
-const showDetail = () => {
-  console.log('A')
-  // const detailPage = document.querySelector('#detailModal')
-  // detailPage.showModal()
-  router.push('/detail')
 }
 
 function sendRequest(selid, regcode) {

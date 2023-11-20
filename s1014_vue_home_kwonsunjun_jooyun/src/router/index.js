@@ -11,13 +11,13 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/detail',
+      path: '/detail/:name',
       name: 'detail',
       component: DetailView
     },
     {
-      path: '/boardform',
-      name: 'boardform',
+      path: '/reviewform/:name',
+      name: 'reviewform',
       component: BoardFormView
     }
     // {
