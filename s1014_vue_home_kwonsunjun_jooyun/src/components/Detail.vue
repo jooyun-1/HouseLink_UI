@@ -1,10 +1,56 @@
 <script setup>
 import Header from './Header.vue'
+import Footer from './Footer.vue'
+import ReviewListItem from './ReviewListItem.vue'
 import router from '../router'
+import axios from 'axios'
+import { ref, onMounted } from 'vue'
 
-const toDetail = () => {}
+const reviews = ref([])
+onMounted(() => {
+  getAll()
+})
+
+const getApartName = () => {
+  const str = document.querySelector('#apartmentname').textContent
+  const apartmentname = str.replace('리뷰', '').substring(0, str.length - 4)
+  return apartmentname
+}
+const getAll = () => {
+  const apartmentname = getApartName()
+  let aptcode = 0
+  axios
+    .get('http://localhost:8080/house/' + apartmentname)
+    .then((res) => {
+      console.log(res)
+      aptcode = res.data
+      axios.get('http://localhost:8080/review/' + aptcode).then((response) => {
+        reviews.value = response.data
+        console.log(response)
+      })
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+}
+const toDetail = () => {
+  const detailModal = document.querySelector('#detailModal')
+  detailModal.showModal()
+}
 const goForm = () => {
-  router.push('/boardform')
+  const apartmentname = getApartName()
+  let aptcode = 0
+  axios
+    .get('http://localhost:8080/house/' + apartmentname)
+    .then((res) => {
+      console.log(res)
+      aptcode = res.data
+    })
+    .catch(function (error) {
+      console.log(error)
+    })
+
+  router.push({ name: 'reviewform', params: { name: apartmentname, aptcode: aptcode } })
 }
 </script>
 
@@ -42,35 +88,48 @@ const goForm = () => {
         </button>
       </div>
     </section>
-    <section>
-      <main class="pt-10 w-screen bg-neutral-50 flex flex-col justify-center">
+    <section id="reviewSection">
+      <main id="reviewMain" class="pt-10 w-screen bg-neutral-50 flex flex-col justify-center">
+        <h1 id="apartmentname" class="font-bold text text-center text-2xl">
+          {{ $route.params.name }} 리뷰
+        </h1>
         <div>
           <div>
             <h2 class="font-bold text-center text-2xl"></h2>
-            <table class="table text-center">
+            <table id="reviewTable" class="table text-center">
               <thead>
-                <tr>
-                  <th class="text-center">번호</th>
-                  <th class="text-center">제목</th>
-
+                <tr class="text-center">
+                  <th class="text-center"></th>
+                  <th class="text-center">Email</th>
+                  <th class="text-center">내용</th>
                   <th class="text-center">날짜</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr class="text-center">
-                  <td>1</td>
-                  <td>완전 만족!</td>
-                  <td>2023.11.16</td>
+              <tbody id="tb">
+                <ReviewListItem v-for="review in reviews" :r="review" />
+                <!-- <tr >
+                  <td class="text-center" v-for="review in reviews" :key="review">
+                    {{ review.email }}
+                  </td>
+                  <td class="text-center" v-for="review in reviews" :key="review">
+                    {{ review.content }}
+                  </td>
+                  <td class="text-center" v-for="review in reviews" :key="review">
+                    {{ review.createdAt[0] }}.{{ review.createdAt[1] }}.{{ review.createdAt[2] }}
+                  </td>
                   <td>
                     <button id="toDetail" class="btn btn-sm" @click="toDetail">상세보기</button>
                   </td>
-                </tr>
+                </tr> -->
               </tbody>
             </table>
           </div>
         </div>
       </main>
     </section>
+
+
+    <Footer id="footer" />
   </div>
 </template>
 
@@ -88,5 +147,15 @@ div.right {
   width: 50%;
   float: right;
   box-sizing: border-box;
+}
+#reviewTable {
+  margin-top: 50px;
+}
+#reviewSection {
+  flex-grow: 1;
+}
+#footer {
+  position: absolute;
+  bottom: 0;
 }
 </style>
