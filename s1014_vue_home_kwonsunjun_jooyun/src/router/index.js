@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import DetailView from '../views/DetailView.vue'
 import BoardFormView from '../views/BoardFormView.vue'
+import DetailSearchView from '../views/DetailSearchView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -19,6 +21,11 @@ const router = createRouter({
       path: '/reviewform/:name',
       name: 'reviewform',
       component: BoardFormView
+    },
+    {
+      path: '/detailsearch',
+      name: 'detailsearch',
+      component: DetailSearchView
     }
     // {
     //   path: '/signin',

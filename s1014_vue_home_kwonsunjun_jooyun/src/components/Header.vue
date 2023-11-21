@@ -41,10 +41,28 @@
           alt=""
           @click="goHome()"
         />
+        <ul class="hidden md:flex gap-1 menu menu-horizontal p-0 m-0">
+          <li>
+            <RouterLink to="/"><a href="#">홈</a></RouterLink>
+          </li>
+          <li>
+            <RouterLink to="/detailsearch"><a href="#">상세 검색</a></RouterLink>
+          </li>
+          <li><a href="#">리뷰 게시판</a></li>
 
+          <li>
+            <details>
+              <summary>관심지역</summary>
+              <ul class="bg-base-100">
+                <li><a href="#">설정하기</a></li>
+                <li><a href="#">둘러보기</a></li>
+              </ul>
+            </details>
+          </li>
+        </ul>
         <div class="">
           <button
-            v-if="!loggedIn" 
+            v-if="!loggedIn"
             id="loginBtn"
             onclick="loginModal.showModal()"
             class="btn btn-primary btn-sm"
@@ -53,24 +71,30 @@
             로그인
           </button>
 
-          <button 
+          <button
             v-if="loggedIn"
             id="logoutBtn"
             @click="logout"
-            class="btn btn-primary btn-sm" 
+            class="btn btn-primary btn-sm"
             style="margin-right: 10px"
           >
             로그아웃
           </button>
 
-          <button 
-            v-if="!loggedIn" 
-            id="signUpBtn" onclick="signUpModal.showModal()" class="btn btn-neutral btn-sm">
+          <button
+            v-if="!loggedIn"
+            id="signUpBtn"
+            onclick="signUpModal.showModal()"
+            class="btn btn-neutral btn-sm"
+          >
             회원가입
           </button>
-          <button 
-            v-if="loggedIn" 
-            id="deleteUserBtn" onclick="signUpModal.showModal()" class="btn btn-neutral btn-sm">
+          <button
+            v-if="loggedIn"
+            id="deleteUserBtn"
+            onclick="signUpModal.showModal()"
+            class="btn btn-neutral btn-sm"
+          >
             회원탈퇴
           </button>
         </div>
@@ -164,12 +188,17 @@
 </template>
 <script setup>
 import router from '../router'
-import axios from 'axios';
-import { ref } from 'vue';
+import axios from 'axios'
+import { ref, onMounted } from 'vue'
 
-
-const  loggedIn = ref(false);
-
+const loggedIn = ref(false)
+onMounted(() => {
+  if (localStorage.getItem('Authorization')) {
+    loggedIn.value = true
+  } else {
+    loggedIn.value = false
+  }
+})
 // router.push('/signin')
 const moveSign = () => {
   let loginModal = document.querySelector('#loginModal')
@@ -190,27 +219,28 @@ const signUp = () => {
   const loginPass = document.querySelector('#signuppw').value
   const name = document.querySelector('#name').value
   const birth = document.querySelector('#birth').value
-  
-  const saveData = {};
+
+  const saveData = {}
   saveData.userId = loginId
   saveData.userPass = loginPass
   saveData.userName = name
   saveData.birth = birth
-  try{
-    axios.post("http://localhost:8080/users/signup", JSON.stringify(saveData), {
-            headers: {
-              "Content-Type": `application/json`,
-            },
-          })
-          .then((res) => {
-            if (res.status === 200) {
-              loggedIn.value= true;
-            }
-          });
-      } catch (error) {
-        console.error(error);
-    }
-    signUpModal.close()
+  try {
+    axios
+      .post('http://localhost:8080/users/signup', JSON.stringify(saveData), {
+        headers: {
+          'Content-Type': `application/json`
+        }
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          loggedIn.value = true
+        }
+      })
+  } catch (error) {
+    console.error(error)
+  }
+  signUpModal.close()
 }
 
 const goHome = () => {
@@ -221,67 +251,67 @@ const login = () => {
   const loginModal = document.querySelector('#loginModal')
   const loginId = document.querySelector('#loginid').value
   const loginPass = document.querySelector('#loginpw').value
-  
-  const saveData = {};
+
+  const saveData = {}
   saveData.userId = loginId
   saveData.userPass = loginPass
 
-  try{
-    axios.post("http://localhost:8080/users/login", JSON.stringify(saveData), {
-            headers: {
-              "Content-Type": `application/json`,
-            },
-          })     
-          .then((res) => {
-            // console.log(res)
-            if (res.status === 200) {
-              loggedIn.value= true
-            }
-          })
-          .catch((e)=>{
-            if(e.response.status === 401){
-              alert('아이디 혹은 비밀번호를 확인해주세요')
-            }else if(e.response.status === 400){
-              alert('아이디 혹은 비밀번호 형식을 확인해주세요')
-            }
-          });
-      } catch (error) {
-        console.error(error);
-        
-    }
-    
+  try {
+    axios
+      .post('http://localhost:8080/users/login', JSON.stringify(saveData), {
+        headers: {
+          'Content-Type': `application/json`
+        }
+      })
+      .then((res) => {
+        // console.log(res)
+        if (res.status === 200) {
+          loggedIn.value = true
+          localStorage.setItem('Authorization', res.headers.get('Authorization'))
+        }
+      })
+      .catch((e) => {
+        if (e.response.status === 401) {
+          alert('아이디 혹은 비밀번호를 확인해주세요')
+        } else if (e.response.status === 400) {
+          alert('아이디 혹은 비밀번호 형식을 확인해주세요')
+        }
+      })
+  } catch (error) {
+    console.error(error)
+  }
+
   loginModal.close()
 }
 
 const logout = () => {
   const loginId = document.querySelector('#loginid').value
-  loggedIn.value=false;
+  loggedIn.value = false
   console.log(loginId)
-  try{
-    
-    axios.post("http://localhost:8080/users/logout/"+loginId, {
-            headers: {
-              "Content-Type": `application/json`,
-            },
-          })     
-          .then((res) => {
-            //// console.log(res)
-            if (res.status === 200) {
-              loggedIn.value= false
-            }
-          })
-          .catch((e)=>{
-            if(e.response.status === 401){
-              alert('아이디 혹은 비밀번호를 확인해주세요')
-            }else if(e.response.status === 400){
-              alert('아이디 혹은 비밀번호 형식을 확인해주세요')
-            }
-          });
-      } catch (error) {
-        console.error(error);
-        
-    }
+  try {
+    axios
+      .post('http://localhost:8080/users/logout/' + loginId, {
+        headers: {
+          'Content-Type': `application/json`
+        }
+      })
+      .then((res) => {
+        //// console.log(res)
+        if (res.status === 200) {
+          loggedIn.value = false
+          localStorage.removeItem('Authorization')
+        }
+      })
+      .catch((e) => {
+        if (e.response.status === 401) {
+          alert('아이디 혹은 비밀번호를 확인해주세요')
+        } else if (e.response.status === 400) {
+          alert('아이디 혹은 비밀번호 형식을 확인해주세요')
+        }
+      })
+  } catch (error) {
+    console.error(error)
+  }
 }
-
 </script>
 <style lang=""></style>

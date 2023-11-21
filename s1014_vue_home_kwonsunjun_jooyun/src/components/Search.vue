@@ -1,10 +1,9 @@
 <script setup>
 import { ref } from 'vue'
 import KakaoMap from './KakaoMap.vue'
-// import { useRouter, useRoute } from 'vue-router'
 import router from '../router'
-// const route = useRoute()
-// const router = useRouter()
+import axios from 'axios'
+
 const yearOptions = ref([])
 
 const date = new Date()
@@ -56,8 +55,6 @@ const gugunChange = (clickedGuGun) => {
 }
 
 const search = () => {
-  const pageNo = 1
-  const numOfRows = 10
 
   const gugunSel = document.querySelector('#gugun')
   const regCode = gugunSel[gugunSel.selectedIndex].value.substr(0, 5)
@@ -66,38 +63,53 @@ const search = () => {
   const year = yearSel[yearSel.selectedIndex].value
   const monthSel = document.querySelector('#month')
   const month = monthSel[monthSel.selectedIndex].value
-  const dealYM = year.substr(0, 4) + month
 
-  const key =
-    'ytDs%2B%2FVKSAwYlWnI3NoOv6SLraVlQ0%2F6jvroGtzyAzmdtx3yXPgkslB2EcTM9H%2BTaGq8wu7DEEZcFwf6MCMSuQ%3D%3D'
-
-  const parameter = `&pageNo=${pageNo}&numOfRows=${numOfRows}&LAWD_CD=${regCode}&DEAL_YMD=${dealYM}`
-
-  fetch(
-    `http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev?serviceKey=${key}` +
-      parameter
-  )
-    .then((response) => response.text())
-    .then((str) => new DOMParser().parseFromString(str, 'application/xml'))
-    .then((xml) => {
-      const aparts = xmlToJson(xml)?.response?.body?.items.item
+  axios
+    .get(
+      'http://localhost:8080/house?sigunguCode=' +
+        regCode +
+        '&dealYear=' +
+        year.substr(0, 4) +
+        '&dealMonth=' +
+        month
+    )
+    .then((res) => {
+      const aparts = res.data
       updateSearchResult(aparts)
-      // eslint-disable-next-line no-undef
-      setMarker(aparts)
+      // setMarker(aparts)
     })
+    .catch((err) => {
+      console.log(err)
+    })
+  // const key =
+  //   'ytDs%2B%2FVKSAwYlWnI3NoOv6SLraVlQ0%2F6jvroGtzyAzmdtx3yXPgkslB2EcTM9H%2BTaGq8wu7DEEZcFwf6MCMSuQ%3D%3D'
+
+  // const parameter = `&pageNo=${pageNo}&numOfRows=${numOfRows}&LAWD_CD=${regCode}&DEAL_YMD=${dealYM}`
+
+  // fetch(
+  //   `http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev?serviceKey=${key}` +
+  //     parameter
+  // )
+  //   .then((response) => response.text())
+  //   .then((str) => new DOMParser().parseFromString(str, 'application/xml'))
+  //   .then((xml) => {
+  //     const aparts = xmlToJson(xml)?.response?.body?.items.item
+  //     updateSearchResult(aparts)
+  //     // eslint-disable-next-line no-undef
+  //     setMarker(aparts)
+  //   })
 }
 
 const updateSearchResult = (aparts) => {
   document.getElementById('search-result').innerHTML = ''
-
-  for (let key in aparts) {
-    const item = aparts[key]
-
-    const name = item['아파트']['#text']
-    const price = item['거래금액']['#text'].trim()
-    const area = item['전용면적']['#text'].trim()
-    const date = `${item['년']['#text']}년 ${item['월']['#text']}월 ${item['일']['#text']}일`
-    const floor = item['층']['#text']
+  // for (let key in aparts) {
+  for (let i = 0; i < aparts.length; i++) {
+    const item = aparts[i]
+    const area = item.area
+    const name = item.apartmentName
+    const floor = item.floor
+    const price = item.dealAmount
+    const date = item.dealYear + '년 ' + item.dealMonth + '월 ' + item.dealDay + '일'
 
     const card = document.createElement('div')
     card.className = 'card w-96 bg-base-100 shadow-sm'
@@ -113,7 +125,8 @@ const updateSearchResult = (aparts) => {
     apartname.className = 'text-indigo-900 mr-[6px]'
     apartname.textContent = name
 
-    const address = `${item['도로명']['#text']} ${item['도로명건물본번호코드']['#text']}`
+    const address = item.roadName + ' ' + item.roadNameBonbun
+    // const address = `${item['도로명']['#text']} ${item['도로명건물본번호코드']['#text']}`
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
       mapOption = {
         center: new window.kakao.maps.LatLng(37.501307715371695, 127.03961032986173), // 지도의 중심좌표
@@ -136,13 +149,9 @@ const updateSearchResult = (aparts) => {
     apartname.onclick = () => {
       const coord = apartname.id.split(' ')
       const moveLocation = new window.kakao.maps.LatLng(coord[0], coord[1])
-      map.panTo(moveLocation)
-    }
-    for (key in aparts) {
-      const item = aparts[key]
-      console.log(item)
-      const address = `${item['도로명']['#text']} ${item['도로명건물본번호코드']['#text']}`
+      const tempPrice = item.dealAmount.replace(',', '')
 
+      const dealtoMillion = Number(tempPrice) / 10 ** 4
       geocoder.addressSearch(address, function (result, status) {
         // 정상적으로 검색이 완료됐으면
         if (status === window.kakao.maps.services.Status.OK) {
@@ -153,14 +162,28 @@ const updateSearchResult = (aparts) => {
             map: map,
             position: coords
           })
-
-          // 인포윈도우로 장소에 대한 설명을 표시합니다
-          var infowindow = new window.kakao.maps.InfoWindow({
-            content: `<div style="width:150px;text-align:center;padding:6px 0;">${item['아파트']['#text']}</div>`
+          var customOverlay = new window.kakao.maps.CustomOverlay({
+            position: coords,
+            content: `<div style="
+    display: block;
+    background: #50627F;
+    color: #fff;
+    text-align: center;
+    height: 50px;
+    line-height:22px;
+    border-radius:4px;
+    margin-top : 25px;
+    padding:0px 10px;
+">${item.apartmentName}
+    <br>
+    ${dealtoMillion} 억
+    </div>`
           })
-          infowindow.open(map, marker)
+          customOverlay.setMap(map, marker)
         }
+        map.panTo(moveLocation)
       })
+
     }
 
     const floorspan = document.createElement('span')
@@ -279,45 +302,6 @@ function initOption(selid) {
   //   options.remove(i);
   // }
 }
-
-function xmlToJson(xml) {
-  // Create the return object
-  var obj = {}
-
-  if (xml.nodeType == 1) {
-    // element
-    // do attributes
-    if (xml.attributes.length > 0) {
-      obj['@attributes'] = {}
-      for (var j = 0; j < xml.attributes.length; j++) {
-        var attribute = xml.attributes.item(j)
-        obj['@attributes'][attribute.nodeName] = attribute.nodeValue
-      }
-    }
-  } else if (xml.nodeType == 3) {
-    // text
-    obj = xml.nodeValue
-  }
-
-  // do children
-  if (xml.hasChildNodes()) {
-    for (var i = 0; i < xml.childNodes.length; i++) {
-      var item = xml.childNodes.item(i)
-      var nodeName = item.nodeName
-      if (typeof obj[nodeName] == 'undefined') {
-        obj[nodeName] = xmlToJson(item)
-      } else {
-        if (typeof obj[nodeName].push == 'undefined') {
-          var old = obj[nodeName]
-          obj[nodeName] = []
-          obj[nodeName].push(old)
-        }
-        obj[nodeName].push(xmlToJson(item))
-      }
-    }
-  }
-  return obj
-}
 </script>
 
 <template lang="">
@@ -425,4 +409,15 @@ function xmlToJson(xml) {
   </div>
 </template>
 
-<style lang=""></style>
+<style scoped>
+.info-title {
+  display: block;
+  background: #50627f;
+  color: #fff;
+  text-align: center;
+  height: 24px;
+  line-height: 22px;
+  border-radius: 4px;
+  padding: 0px 10px;
+}
+</style>

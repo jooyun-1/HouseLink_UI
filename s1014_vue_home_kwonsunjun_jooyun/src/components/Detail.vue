@@ -38,19 +38,24 @@ const toDetail = () => {
   detailModal.showModal()
 }
 const goForm = () => {
-  const apartmentname = getApartName()
-  let aptcode = 0
-  axios
-    .get('http://localhost:8080/house/' + apartmentname)
-    .then((res) => {
-      console.log(res)
-      aptcode = res.data
-    })
-    .catch(function (error) {
-      console.log(error)
-    })
+  if (localStorage.getItem('Authorization')) {
+    const apartmentname = getApartName()
+    let aptcode = 0
+    axios
+      .get('http://localhost:8080/house/' + apartmentname)
+      .then((res) => {
+        // console.log(res.headers)
+        // console.log()
+        aptcode = res.data
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
 
-  router.push({ name: 'reviewform', params: { name: apartmentname, aptcode: aptcode } })
+    router.push({ name: 'reviewform', params: { name: apartmentname, aptcode: aptcode } })
+  } else {
+    alert('로그인이 필요합니다!')
+  }
 }
 </script>
 
@@ -127,7 +132,6 @@ const goForm = () => {
         </div>
       </main>
     </section>
-
 
     <Footer id="footer" />
   </div>
