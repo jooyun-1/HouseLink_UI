@@ -168,8 +168,8 @@ import axios from 'axios';
 import { ref } from 'vue';
 
 
-const  loggedIn = ref(false);
-
+const loggedIn = ref(false);
+const isAdmin = ref(false);
 // router.push('/signin')
 const moveSign = () => {
   let loginModal = document.querySelector('#loginModal')
@@ -205,6 +205,7 @@ const signUp = () => {
           .then((res) => {
             if (res.status === 200) {
               loggedIn.value= true;
+              console.log(res)
             }
           });
       } catch (error) {
@@ -233,9 +234,12 @@ const login = () => {
             },
           })     
           .then((res) => {
-            // console.log(res)
+            console.log(res.headers.role)
             if (res.status === 200) {
               loggedIn.value= true
+              if(res.headers.role==='admin'){
+                isAdmin.value=true;
+              }
             }
           })
           .catch((e)=>{
@@ -256,7 +260,6 @@ const login = () => {
 const logout = () => {
   const loginId = document.querySelector('#loginid').value
   loggedIn.value=false;
-  console.log(loginId)
   try{
     
     axios.post("http://localhost:8080/users/logout/"+loginId, {
