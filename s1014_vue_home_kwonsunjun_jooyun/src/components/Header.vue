@@ -188,10 +188,12 @@
 </template>
 <script setup>
 import router from '../router'
+
 import axios from 'axios'
 import { ref, onMounted } from 'vue'
 
 const loggedIn = ref(false)
+const isAdmin = ref(false)
 onMounted(() => {
   if (localStorage.getItem('Authorization')) {
     loggedIn.value = true
@@ -199,16 +201,12 @@ onMounted(() => {
     loggedIn.value = false
   }
 })
+
 // router.push('/signin')
 const moveSign = () => {
   let loginModal = document.querySelector('#loginModal')
   loginModal.close()
 
-  let signUpModal = document.querySelector('#signUpModal')
-  signUpModal.showModal()
-}
-
-const showsignUp = () => {
   let signUpModal = document.querySelector('#signUpModal')
   signUpModal.showModal()
 }
@@ -225,6 +223,7 @@ const signUp = () => {
   saveData.userPass = loginPass
   saveData.userName = name
   saveData.birth = birth
+
   try {
     axios
       .post('http://localhost:8080/users/signup', JSON.stringify(saveData), {
@@ -235,6 +234,7 @@ const signUp = () => {
       .then((res) => {
         if (res.status === 200) {
           loggedIn.value = true
+          console.log(res)
         }
       })
   } catch (error) {
@@ -264,10 +264,13 @@ const login = () => {
         }
       })
       .then((res) => {
-        // console.log(res)
+        console.log(res.headers.role)
         if (res.status === 200) {
           loggedIn.value = true
           localStorage.setItem('Authorization', res.headers.get('Authorization'))
+          if (res.headers.role === 'admin') {
+            isAdmin.value = true
+          }
         }
       })
       .catch((e) => {
@@ -286,8 +289,8 @@ const login = () => {
 
 const logout = () => {
   const loginId = document.querySelector('#loginid').value
+
   loggedIn.value = false
-  console.log(loginId)
   try {
     axios
       .post('http://localhost:8080/users/logout/' + loginId, {
