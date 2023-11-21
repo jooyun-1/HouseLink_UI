@@ -8,12 +8,13 @@ const toDetail = () => {
   axios
     .get('http://localhost:8080/review/' + props.r.aptCode + '/' + props.r.reviewId)
     .then((res) => {
-      let loginid = document.querySelector('#loginid')
-      loginid.value = res.data.email
+      let emailInput = document.querySelector('#emailInput')
+      emailInput.value = res.data.email
+      console.log(emailInput.value)
       let content = document.querySelector('#content')
       content.textContent = res.data.content
       let date = document.querySelector('#date')
-      console.log(res.data.createdAt)
+      console.log(res.data)
       date.value = res.data.createdAt[0] + '.' + res.data.createdAt[1] + '.' + res.data.createdAt[2]
     })
     .catch((error) => {
@@ -55,15 +56,21 @@ const toDetail = () => {
       </label>
       <input
         type="text"
-        id="loginid"
+        id="emailInput"
         placeholder="Email"
         maxlength="50"
         class="input input-bordered w-full max-w-md"
+        readonly
       />
       <label class="label">
         <span class="label-text">내용</span>
       </label>
-      <textarea id="content" class="textarea textarea-bordered h-24" placeholder="내용"></textarea>
+      <textarea
+        id="content"
+        class="textarea textarea-bordered h-24"
+        placeholder="내용"
+        readonly
+      ></textarea>
       <label class="label">
         <span class="label-text">날짜</span>
       </label>
@@ -73,6 +80,7 @@ const toDetail = () => {
         placeholder="날짜"
         maxlength="20"
         class="input input-bordered w-full max-w-md"
+        readonly
       />
     </div>
   </dialog>

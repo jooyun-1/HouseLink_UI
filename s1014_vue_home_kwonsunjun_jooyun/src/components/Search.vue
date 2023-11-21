@@ -81,25 +81,8 @@ const search = () => {
     .catch((err) => {
       console.log(err)
     })
-  // const key =
-  //   'ytDs%2B%2FVKSAwYlWnI3NoOv6SLraVlQ0%2F6jvroGtzyAzmdtx3yXPgkslB2EcTM9H%2BTaGq8wu7DEEZcFwf6MCMSuQ%3D%3D'
-
-  // const parameter = `&pageNo=${pageNo}&numOfRows=${numOfRows}&LAWD_CD=${regCode}&DEAL_YMD=${dealYM}`
-
-  // fetch(
-  //   `http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev?serviceKey=${key}` +
-  //     parameter
-  // )
-  //   .then((response) => response.text())
-  //   .then((str) => new DOMParser().parseFromString(str, 'application/xml'))
-  //   .then((xml) => {
-  //     const aparts = xmlToJson(xml)?.response?.body?.items.item
-  //     updateSearchResult(aparts)
-  //     // eslint-disable-next-line no-undef
-  //     setMarker(aparts)
-  //   })
-}
-
+  }
+  
 const updateSearchResult = (aparts) => {
   document.getElementById('search-result').innerHTML = ''
   // for (let key in aparts) {
