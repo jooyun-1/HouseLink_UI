@@ -106,32 +106,6 @@ watch(
   { immediate: true }
 )
 
-function onSubmit() {
-  // event.preventDefault();
-
-  if (subjectErrMsg.value) {
-    alert(subjectErrMsg.value)
-  } else if (contentErrMsg.value) {
-    alert(contentErrMsg.value)
-  } else {
-    props.type === 'regist' ? writeArticle() : updateArticle()
-  }
-}
-
-function writeArticle() {
-  console.log('글등록하자!!', article.value)
-  // API 호출
-}
-
-function updateArticle() {
-  console.log(article.value.articleNo + '번글 수정하자!!', article.value)
-  // API 호출
-}
-
-function moveList() {
-  router.push({ name: 'article-list' })
-}
-
 const goList = () => {
   const housename = document.querySelector('#housename').textContent
   router.push('/detail/' + housename)
@@ -147,6 +121,7 @@ const regist = () => {
       aptcode = res.data
       axios
         .post('http://localhost:8080/review/' + aptcode, {
+          email: localStorage.getItem('email'),
           content: content
         })
         .then((res) => {

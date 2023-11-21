@@ -14,41 +14,22 @@
       />
     </head>
     <header>
-      <nav class="navbar md:flex p-2 px-12 justify-between">
-        <menu class="md:hidden">
-          <div class="dropdown">
-            <ul
-              tabindex="0"
-              class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
-            >
-              <li><a href="#">공지사항</a></li>
-              <li><a href="#">오늘의 뉴스</a></li>
-              <li><a href="#">자유글</a></li>
-              <li><a href="#">주변탐방</a></li>
-              <li>
-                <a>관심지역</a>
-                <ul class="p-2">
-                  <li><a href="#">관심지역 설정하기</a></li>
-                  <li><a href="#">관심지역 둘러보기</a></li>
-                </ul>
-              </li>
-            </ul>
-          </div>
-        </menu>
+      <nav class="navbar md:flex p-2 px-12 max-w-7xl justify-between">
         <img
           src="../assets/logo.jpg"
           class="w-[10rem] h-[3rem] object-cover"
           alt=""
           @click="goHome()"
         />
-        <ul class="hidden md:flex gap-1 menu menu-horizontal p-0 m-0">
-          <li>
-            <RouterLink to="/"><a href="#">홈</a></RouterLink>
-          </li>
-          <li>
-            <RouterLink to="/detailsearch"><a href="#">상세 검색</a></RouterLink>
-          </li>
-          <li><a href="#">리뷰 게시판</a></li>
+        <div class="flex-none">
+          <ul class="menu menu-horizontal px-1">
+            <li>
+              <RouterLink to="/"><a href="#">홈</a></RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/detailsearch"><a href="#">상세 검색</a></RouterLink>
+            </li>
+            <li><a href="#">리뷰 게시판</a></li>
 
           <li>
             <details>
@@ -59,13 +40,7 @@
               </ul>
             </details>
           </li>
-          <button v-if='isAdmin' id="createAptBtn" onclick="postAptModal.showModal()" class="btn btn-neutral btn-sm">아파트 등록</button>
-          <button v-if='isAdmin' id="updateAptBtn" onclick="signUpModal.showModal()" class="btn btn-neutral btn-sm">아파트 수정</button>
-          <button v-if='isAdmin' id="deleteAptBtn" onclick="signUpModal.showModal()" class="btn btn-neutral btn-sm">아파트 삭제</button>
         </ul>
-
-        
-              
         <div class="">
           <button
             v-if="!loggedIn"
@@ -432,6 +407,7 @@ const login = () => {
         if (res.status === 200) {
           loggedIn.value = true
           localStorage.setItem('Authorization', res.headers.get('Authorization'))
+          localStorage.setItem('email', loginId)
           if (res.headers.role === 'admin') {
             isAdmin.value = true
           }
@@ -453,13 +429,13 @@ const login = () => {
 
 const logout = () => {
   const loginId = document.querySelector('#loginid').value
+
   loggedIn.value = false
   const data = null
   try {
     axios
-      .post('http://localhost:8080/users/logout' , data,{
+      .post('http://localhost:8080/users/logout/' + loginId, {
         headers: {
-          "Authorization" : localStorage.getItem("Authorization"),
           'Content-Type': `application/json`
         }
       })
@@ -467,6 +443,7 @@ const logout = () => {
         if (res.status === 200) {
           loggedIn.value = false
           localStorage.removeItem('Authorization')
+          localStorage.removeItem('email')
         }
       })
       .catch((e) => {
