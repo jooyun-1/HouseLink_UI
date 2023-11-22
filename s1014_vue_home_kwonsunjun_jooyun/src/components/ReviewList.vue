@@ -12,7 +12,7 @@ onMounted(() => {
 })
 
 const getApartName = () => {
-  axios.get('http://localhost:8080/house/aptcode/'+)
+  axios.get('http://localhost:8080/house/aptcode/')
   return apartmentname
 }
 const getAllList = () => {
