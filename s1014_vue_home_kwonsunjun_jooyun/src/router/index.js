@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import DetailView from '../views/DetailView.vue'
 import BoardFormView from '../views/BoardFormView.vue'
 import DetailSearchView from '../views/DetailSearchView.vue'
+import ReviewListView from '../views/ReviewListView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/detailsearch',
       name: 'detailsearch',
       component: DetailSearchView
+    },
+    {
+      path: '/reviewlist',
+      name: 'reviewlist',
+      component: ReviewListView
     }
     // {
     //   path: '/signin',

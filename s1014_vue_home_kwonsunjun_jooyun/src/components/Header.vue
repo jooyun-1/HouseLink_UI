@@ -14,7 +14,7 @@
       />
     </head>
     <header>
-      <nav class="navbar md:flex p-2 px-12 max-w-7xl justify-between">
+      <nav class="navbar md:flex p-2 px-12 justify-between">
         <img
           src="../assets/logo.jpg"
           class="w-[10rem] h-[3rem] object-cover"
@@ -29,18 +29,21 @@
             <li>
               <RouterLink to="/detailsearch"><a href="#">상세 검색</a></RouterLink>
             </li>
-            <li><a href="#">리뷰 게시판</a></li>
+            <li>
+              <RouterLink to="/reviewlist"><a href="#">리뷰 게시판</a></RouterLink>
+            </li>
 
-          <li>
-            <details>
-              <summary>관심지역</summary>
-              <ul class="bg-base-100">
-                <li><a href="#">설정하기</a></li>
-                <li><a href="#">둘러보기</a></li>
-              </ul>
-            </details>
-          </li>
-        </ul>
+            <li>
+              <details>
+                <summary>관심지역</summary>
+                <ul class="bg-base-100">
+                  <li><a href="#">설정하기</a></li>
+                  <li><a href="#">둘러보기</a></li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </div>
         <div class="">
           <button
             v-if="!loggedIn"
@@ -277,7 +280,6 @@
             </div>
           </div>
         </dialog>
-
       </nav>
     </header>
   </div>
@@ -367,7 +369,7 @@ const postApt = () => {
     axios
       .post('http://localhost:8080/house', JSON.stringify(saveData), {
         headers: {
-          "Authorization" : localStorage.getItem("Authorization"),
+          Authorization: localStorage.getItem('Authorization'),
           'Content-Type': `application/json`
         }
       })
@@ -399,7 +401,6 @@ const login = () => {
     axios
       .post('http://localhost:8080/users/login', JSON.stringify(saveData), {
         headers: {
-          
           'Content-Type': `application/json`
         }
       })
@@ -428,15 +429,14 @@ const login = () => {
 }
 
 const logout = () => {
-  const loginId = document.querySelector('#loginid').value
-
   loggedIn.value = false
   const data = null
   try {
     axios
-      .post('http://localhost:8080/users/logout/' + loginId, {
+      .post('http://localhost:8080/users/logout', data, {
         headers: {
-          'Content-Type': `application/json`
+          'Content-Type': `application/json`,
+          Authorization: localStorage.getItem('Authorization')
         }
       })
       .then((res) => {
@@ -458,4 +458,4 @@ const logout = () => {
   }
 }
 </script>
-<style lang=""></style>
+<style></style>
