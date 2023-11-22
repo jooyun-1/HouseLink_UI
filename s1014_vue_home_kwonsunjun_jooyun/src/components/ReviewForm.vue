@@ -122,6 +122,7 @@ const regist = () => {
       axios
         .post('http://localhost:8080/review/' + aptcode, {
           email: localStorage.getItem('email'),
+          apartmentName: housename,
           content: content
         })
         .then((res) => {

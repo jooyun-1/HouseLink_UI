@@ -11,17 +11,18 @@ onMounted(() => {
   getAllList()
 })
 
-const getApartName = () => {
-  axios.get('http://localhost:8080/house/aptcode/'+)
-  return apartmentname
-}
+// const getApartName = () => {
+//   axios.get('http://localhost:8080/house/aptcode/')
+//   return apartmentname
+// }
+
 const getAllList = () => {
-  const apartmentname = getApartName()
+  // const apartmentname = getApartName()
 
-
-  axios.get('http://localhost:8080/review').then((response) => {
+  axios
+    .get('http://localhost:8080/review')
+    .then((response) => {
       reviews.value = response.data
-      console.log(response)
     })
     .catch(function (error) {
       console.log(error)
@@ -89,9 +90,7 @@ const goForm = () => {
     </section>
     <section id="reviewSection">
       <main id="reviewMain" class="pt-10 w-screen bg-neutral-50 flex flex-col justify-center">
-        <h1 id="apartmentname" class="font-bold text text-center text-2xl">
-          전체 리뷰
-        </h1>
+        <h1 id="apartmentname" class="font-bold text text-center text-2xl">전체 리뷰</h1>
         <div>
           <div>
             <h2 class="font-bold text-center text-2xl"></h2>
@@ -107,29 +106,22 @@ const goForm = () => {
               </thead>
               <tbody id="tb">
                 <ReviewListItem v-for="review in reviews" :r="review" />
-                <!-- <tr >
-                  <td class="text-center" v-for="review in reviews" :key="review">
-                    {{ review.email }}
-                  </td>
-                  <td class="text-center" v-for="review in reviews" :key="review">
-                    {{ review.content }}
-                  </td>
-                  <td class="text-center" v-for="review in reviews" :key="review">
-                    {{ review.createdAt[0] }}.{{ review.createdAt[1] }}.{{ review.createdAt[2] }}
-                  </td>
-                  <td>
-                    <button id="toDetail" class="btn btn-sm" @click="toDetail">상세보기</button>
-                  </td>
-                </tr> -->
               </tbody>
             </table>
           </div>
         </div>
       </main>
     </section>
-
-    <Footer id="footer" />
+    <section style="margin: auto">
+      <div id="pageDiv" class="join grid place-items-center">
+        <button class="join-item btn btn-sm">1</button>
+        <button class="join-item btn btn-sm btn-active">2</button>
+        <button class="join-item btn btn-sm">3</button>
+        <button class="join-item btn btn-sm">4</button>
+      </div>
+    </section>
   </div>
+  <Footer id="footer" />
 </template>
 
 <style scoped>
@@ -153,8 +145,9 @@ div.right {
 #reviewSection {
   flex-grow: 1;
 }
-#footer {
-  position: absolute;
-  bottom: 0;
+#pageDiv {
+  display: block;
+  text-align: center;
+  margin-top: 5px;
 }
 </style>

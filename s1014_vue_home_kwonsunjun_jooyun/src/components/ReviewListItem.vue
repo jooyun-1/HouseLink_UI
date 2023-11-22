@@ -29,6 +29,9 @@ const toDetail = () => {
     <td class="text-center">
       {{ r.email }}
     </td>
+    <td class="text-center">
+      {{ r.apartmentName }}
+    </td>
     <td class="text-center">{{ r.content.substring(0, 10) }}...</td>
     <td class="text-center">{{ r.createdAt[0] }}.{{ r.createdAt[1] }}.{{ r.createdAt[2] }}</td>
     <td>
@@ -39,6 +42,9 @@ const toDetail = () => {
     <td class="text-center"></td>
     <td class="text-center">
       {{ r.email }}
+    </td>
+    <td class="text-center">
+      {{ r.apartmentName }}
     </td>
     <td class="text-center">{{ r.content }}</td>
     <td class="text-center">{{ r.createdAt[0] }}.{{ r.createdAt[1] }}.{{ r.createdAt[2] }}</td>
