@@ -11,11 +11,6 @@ onMounted(() => {
   getAllList()
 })
 
-// const getApartName = () => {
-//   axios.get('http://localhost:8080/house/aptcode/')
-//   return apartmentname
-// }
-
 const getAllList = () => {
   // const apartmentname = getApartName()
 

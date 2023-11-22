@@ -42,6 +42,9 @@
                 </ul>
               </details>
             </li>
+            <button v-if='isAdmin' id="createAptBtn" onclick="postAptModal.showModal()" class="btn btn-neutral btn-sm">아파트 등록</button>
+            <button v-if='isAdmin' id="updateAptBtn" onclick="updateAptModal.showModal()" class="btn btn-neutral btn-sm">아파트 수정</button>
+            <button v-if='isAdmin' id="deleteAptBtn" onclick="deleteAptModal.showModal()" class="btn btn-neutral btn-sm">아파트 삭제</button>
           </ul>
         </div>
         <div class="">
@@ -280,6 +283,157 @@
             </div>
           </div>
         </dialog>
+
+        <dialog id="updateAptModal" class="modal">
+          <div class="modal-box flex flex-col justify-center w-[25rem]">
+            <form method="dialog">
+              <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <label class="label">
+              <span class="label-text">수정할 아파트 등록번호</span>
+            </label>
+            <input
+              type="text"
+              id="updateAptNo"
+              placeholder="AptID"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            />
+            <label class="label">
+              <span class="label-text">아파트이름</span>
+            </label>
+            <input
+              type="text"
+              id="updateAptName"
+              placeholder="AptName"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            />
+            <label class="label">
+              <span class="label-text">시/군/구 코드</span>
+            </label>
+            <input
+              type="text"
+              id="updateSigunguCode"
+              placeholder="Code"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            />
+            <label class="label">
+              <span class="label-text">층</span>
+            </label>
+            <input
+              type="text"
+              id="updateFloor"
+              placeholder="Floor"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            />
+            <label class="label">
+              <span class="label-text">면적</span>
+            </label>
+            <input
+              type="text"
+              id="updateArea"
+              placeholder="Area"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            />
+            <label class="label">
+              <span class="label-text">아파트 거래 연도</span>
+            </label>
+            <input
+              type="text"
+              id="updateDealYear"
+              placeholder="DealYear"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            />
+            <label class="label">
+              <span class="label-text">아파트 거래 월</span>
+            </label>
+            <input
+              type="text"
+              id="updateDealMonth"
+              placeholder="DealMonth"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            />
+            <label class="label">
+              <span class="label-text">아파트 거래 일</span>
+            </label>
+            <input
+              type="text"
+              id="updateDealDay"
+              placeholder="DealDay"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            />
+            <label class="label">
+              <span class="label-text">아파트 거래 가격</span>
+            </label>
+            <input
+              type="text"
+              id="updateDealAmount"
+              placeholder="DealAmount"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            />
+            <label class="label">
+              <span class="label-text">아파트 코드</span>
+            </label>
+            <input
+              type="text"
+              id="updateAptCode"
+              placeholder="AptCode"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            />
+            <div class="flex gap-[10px] p-4 pl-0 pb-0">
+              <button class="btn btn-primary w-1/2" style="margin: auto" @click="updateApt()">
+                아파트 수정
+              </button>
+              <!-- <button class="btn btn-primary w-1/2" onclick="login()">로그인</button> -->
+            </div>
+          </div>
+        </dialog>
+
+
+
+        <dialog id="deleteAptModal" class="modal">
+          <div class="modal-box flex flex-col justify-center w-[25rem]">
+            <form method="dialog">
+              <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <label class="label">
+              <span class="label-text">삭제할 아파트이름을 입력해주세요</span>
+            </label>
+            <input
+              type="text"
+              id="deleteAptName"
+              placeholder="AptName"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            />
+            <!-- <label class="label">
+              <span class="label-text">아파트 코드</span>
+            </label>
+            <input
+              type="text"
+              id="aptCode"
+              placeholder="AptCode"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            /> -->
+            <div class="flex gap-[10px] p-4 pl-0 pb-0">
+              <button class="btn btn-primary w-1/2" style="margin: auto" @click="deleteApt()">
+                아파트 삭제
+              </button>
+              <!-- <button class="btn btn-primary w-1/2" onclick="login()">로그인</button> -->
+            </div>
+          </div>
+        </dialog>
+
       </nav>
     </header>
   </div>
@@ -297,6 +451,11 @@ onMounted(() => {
     loggedIn.value = true
   } else {
     loggedIn.value = false
+  }
+  if (localStorage.getItem('role')==='admin'){
+    isAdmin.value=true;
+  }else{
+    isAdmin.value=false;
   }
 })
 
@@ -384,6 +543,83 @@ const postApt = () => {
   postAptModal.close()
 }
 
+const updateApt = () => {
+  const updateAptModal = document.querySelector('#updateAptModal')
+  const no = document.querySelector('#updateAptNo').value
+  const houseName = document.querySelector('#updateAptName').value
+  const sigunguCode = document.querySelector('#updateSigunguCode').value
+  const floor = document.querySelector('#updateFloor').value
+  const area = document.querySelector('#updateArea').value
+  const dealYear = document.querySelector('#updateDealYear').value
+  const dealMonth = document.querySelector('#updateDealMonth').value
+  const dealDay = document.querySelector('#updateDealDay').value
+  const dealAmount = document.querySelector('#updateDealAmount').value
+  const aptCode = document.querySelector('#updateAptCode').value
+
+  const saveData = {}
+  saveData.no = no
+  saveData.houseName = houseName
+  saveData.sigunguCode = sigunguCode
+  saveData.floor = floor
+  saveData.area = area
+  saveData.dealYear = dealYear
+  saveData.dealMonth = dealMonth
+  saveData.dealDay = dealDay
+  saveData.dealAmount = dealAmount
+  saveData.aptCode = aptCode
+
+  try {
+    axios
+      .put('http://localhost:8080/house', JSON.stringify(saveData), {
+        headers: {
+          "Authorization" : localStorage.getItem("Authorization"),
+          'Content-Type': `application/json`
+        }
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(saveData)
+        }
+      })
+  } catch (error) {
+    console.error(error)
+  }
+  updateAptModal.close()
+}
+
+
+
+const deleteApt = () => {
+  const deleteAptModal = document.querySelector('#deleteAptModal')
+  const houseName = document.querySelector('#deleteAptName').value
+  // const aptCode = document.querySelector('#updateAptCode').value
+  const saveData = {}
+  saveData.houseName = houseName
+  // saveData.aptCode = aptCode
+  try {
+    axios
+      .delete('http://localhost:8080/house', {
+        data: {
+          houseName: houseName
+        }, 
+        headers: {
+          "Authorization" : localStorage.getItem("Authorization"),
+          'Content-Type': `application/json`
+        }
+      })
+      console.log(res)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log(saveData)
+        }
+      })
+  } catch (error) {
+    console.error(error)
+  }
+  deleteAptModal.close()
+}
+
+
 const goHome = () => {
   router.push('/')
 }
@@ -411,6 +647,7 @@ const login = () => {
           localStorage.setItem('email', loginId)
           if (res.headers.role === 'admin') {
             isAdmin.value = true
+            localStorage.setItem('role', 'admin')
           }
         }
       })
@@ -444,6 +681,7 @@ const logout = () => {
           loggedIn.value = false
           localStorage.removeItem('Authorization')
           localStorage.removeItem('email')
+          localStorage.removeItem('role')
         }
       })
       .catch((e) => {
