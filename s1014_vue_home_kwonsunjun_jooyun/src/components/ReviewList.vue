@@ -23,28 +23,20 @@ const getAllList = () => {
       console.log(error)
     })
 }
-const toDetail = () => {
-  const detailModal = document.querySelector('#detailModal')
-  detailModal.showModal()
-}
-const goForm = () => {
-  if (localStorage.getItem('Authorization')) {
-    const apartmentname = getApartName()
-    let aptcode = 0
+
+const myReview = () => {
+  const email = localStorage.getItem('email')
+  if (email) {
     axios
-      .get('http://localhost:8080/house/' + apartmentname)
-      .then((res) => {
-        // console.log(res.headers)
-        // console.log()
-        aptcode = res.data
+      .get('  http://localhost:8080/review/myreview/' + email)
+      .then((response) => {
+        reviews.value = response.data
       })
       .catch(function (error) {
         console.log(error)
       })
-
-    router.push({ name: 'reviewform', params: { name: apartmentname, aptcode: aptcode } })
   } else {
-    alert('로그인이 필요합니다!')
+    alert('로그인이 필요합니다!!')
   }
 }
 </script>
@@ -86,7 +78,11 @@ const goForm = () => {
     <section id="reviewSection">
       <main id="reviewMain" class="pt-10 w-screen bg-neutral-50 flex flex-col justify-center">
         <h1 id="apartmentname" class="font-bold text text-center text-2xl">전체 리뷰</h1>
+
         <div>
+          <button id="myReviewBtn" class="btn btn-neutral btn-sm" @click="myReview">
+            내 리뷰 보기
+          </button>
           <div>
             <h2 class="font-bold text-center text-2xl"></h2>
             <table id="reviewTable" class="table text-center">
@@ -106,14 +102,6 @@ const goForm = () => {
           </div>
         </div>
       </main>
-    </section>
-    <section style="margin: auto">
-      <div id="pageDiv" class="join grid place-items-center">
-        <button class="join-item btn btn-sm">1</button>
-        <button class="join-item btn btn-sm btn-active">2</button>
-        <button class="join-item btn btn-sm">3</button>
-        <button class="join-item btn btn-sm">4</button>
-      </div>
     </section>
   </div>
   <Footer id="footer" />
@@ -140,9 +128,9 @@ div.right {
 #reviewSection {
   flex-grow: 1;
 }
-#pageDiv {
-  display: block;
-  text-align: center;
-  margin-top: 5px;
+#myReviewBtn {
+  position: absolute;
+  right: 0;
+  width: 150px;
 }
 </style>

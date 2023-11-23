@@ -106,26 +106,13 @@ const goForm = () => {
                 <tr class="text-center">
                   <th class="text-center"></th>
                   <th class="text-center">Email</th>
+                  <th class="text-center">아파트명</th>
                   <th class="text-center">내용</th>
                   <th class="text-center">날짜</th>
                 </tr>
               </thead>
               <tbody id="tb">
                 <ReviewListItem v-for="review in reviews" :r="review" />
-                <!-- <tr >
-                  <td class="text-center" v-for="review in reviews" :key="review">
-                    {{ review.email }}
-                  </td>
-                  <td class="text-center" v-for="review in reviews" :key="review">
-                    {{ review.content }}
-                  </td>
-                  <td class="text-center" v-for="review in reviews" :key="review">
-                    {{ review.createdAt[0] }}.{{ review.createdAt[1] }}.{{ review.createdAt[2] }}
-                  </td>
-                  <td>
-                    <button id="toDetail" class="btn btn-sm" @click="toDetail">상세보기</button>
-                  </td>
-                </tr> -->
               </tbody>
             </table>
           </div>

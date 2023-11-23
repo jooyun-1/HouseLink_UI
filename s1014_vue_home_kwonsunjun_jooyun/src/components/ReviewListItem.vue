@@ -14,7 +14,7 @@ const toDetail = () => {
       let content = document.querySelector('#content')
       content.textContent = res.data.content
       let date = document.querySelector('#date')
-      console.log(res.data)
+
       date.value = res.data.createdAt[0] + '.' + res.data.createdAt[1] + '.' + res.data.createdAt[2]
     })
     .catch((error) => {
@@ -34,9 +34,15 @@ const toDetail = () => {
     </td>
     <td class="text-center">{{ r.content.substring(0, 10) }}...</td>
     <td class="text-center">{{ r.createdAt[0] }}.{{ r.createdAt[1] }}.{{ r.createdAt[2] }}</td>
-    <td>
+    <td class="btnGroup">
       <button id="toDetail" class="btn btn-sm" @click="toDetail">상세보기</button>
     </td>
+    <!-- <td class="btnGroup" v-if="checkUser()">
+      <button id="deletebtn" class="btn btn-sm" @click="deleteReview">수정</button>
+    </td>
+    <td class="btnGroup" v-if="checkUser()">
+      <button id="updatebtn" class="btn btn-sm" @click="updateReview">삭제</button>
+    </td> -->
   </tr>
   <tr v-else>
     <td class="text-center"></td>
@@ -48,9 +54,15 @@ const toDetail = () => {
     </td>
     <td class="text-center">{{ r.content }}</td>
     <td class="text-center">{{ r.createdAt[0] }}.{{ r.createdAt[1] }}.{{ r.createdAt[2] }}</td>
-    <td>
+    <td class="btnGroup">
       <button id="toDetail" class="btn btn-sm" @click="toDetail">상세보기</button>
     </td>
+    <!-- <td class="btnGroup" v-if="checkUser()">
+      <button id="deletebtn" class="btn btn-sm" @click="deleteReview">수정</button>
+    </td>
+    <td class="btnGroup" v-if="checkUser()">
+      <button id="updatebtn" class="btn btn-sm" @click="updateReview">삭제</button>
+    </td> -->
   </tr>
   <dialog id="detailModal" class="modal">
     <div class="modal-box flex flex-col justify-center w-[25rem]">
@@ -92,4 +104,8 @@ const toDetail = () => {
   </dialog>
 </template>
 
-<style scoped></style>
+<style scoped>
+td .btnGroup {
+  margin-right: 1px;
+}
+</style>

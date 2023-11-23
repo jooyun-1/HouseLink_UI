@@ -42,9 +42,30 @@
                 </ul>
               </details>
             </li>
-            <button v-if='isAdmin' id="createAptBtn" onclick="postAptModal.showModal()" class="btn btn-neutral btn-sm">아파트 등록</button>
-            <button v-if='isAdmin' id="updateAptBtn" onclick="updateAptModal.showModal()" class="btn btn-neutral btn-sm">아파트 수정</button>
-            <button v-if='isAdmin' id="deleteAptBtn" onclick="deleteAptModal.showModal()" class="btn btn-neutral btn-sm">아파트 삭제</button>
+            <button
+              v-if="isAdmin"
+              id="createAptBtn"
+              onclick="postAptModal.showModal()"
+              class="btn btn-neutral btn-sm"
+            >
+              아파트 등록
+            </button>
+            <button
+              v-if="isAdmin"
+              id="updateAptBtn"
+              onclick="updateAptModal.showModal()"
+              class="btn btn-neutral btn-sm"
+            >
+              아파트 수정
+            </button>
+            <button
+              v-if="isAdmin"
+              id="deleteAptBtn"
+              onclick="deleteAptModal.showModal()"
+              class="btn btn-neutral btn-sm"
+            >
+              아파트 삭제
+            </button>
           </ul>
         </div>
         <div class="">
@@ -79,7 +100,7 @@
           <button
             v-if="loggedIn"
             id="deleteUserBtn"
-            onclick="signUpModal.showModal()"
+            onclick="deleteModal.showModal()"
             class="btn btn-neutral btn-sm"
           >
             회원탈퇴
@@ -169,7 +190,39 @@
             </div>
           </div>
         </dialog>
-
+        <dialog id="deleteModal" class="modal">
+          <div class="modal-box flex flex-col justify-center w-[25rem]">
+            <form method="dialog">
+              <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+            <label class="label">
+              <span class="label-text">아이디</span>
+            </label>
+            <input
+              type="text"
+              id="deleteid"
+              placeholder="ID"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            />
+            <label class="label">
+              <span class="label-text">비밀번호</span>
+            </label>
+            <input
+              type="password"
+              id="deletepw"
+              placeholder="PW"
+              maxlength="20"
+              class="input input-bordered w-full max-w-md"
+            />
+            <div class="flex gap-[10px] p-4 pl-0 pb-0">
+              <button class="btn btn-primary w-1/2" style="margin: auto" @click="deleteUser()">
+                회원탈퇴
+              </button>
+              <!-- <button class="btn btn-primary w-1/2" onclick="login()">로그인</button> -->
+            </div>
+          </div>
+        </dialog>
         <dialog id="postAptModal" class="modal">
           <div class="modal-box flex flex-col justify-center w-[25rem]">
             <form method="dialog">
@@ -398,8 +451,6 @@
           </div>
         </dialog>
 
-
-
         <dialog id="deleteAptModal" class="modal">
           <div class="modal-box flex flex-col justify-center w-[25rem]">
             <form method="dialog">
@@ -433,7 +484,6 @@
             </div>
           </div>
         </dialog>
-
       </nav>
     </header>
   </div>
@@ -452,10 +502,10 @@ onMounted(() => {
   } else {
     loggedIn.value = false
   }
-  if (localStorage.getItem('role')==='admin'){
-    isAdmin.value=true;
-  }else{
-    isAdmin.value=false;
+  if (localStorage.getItem('role') === 'admin') {
+    isAdmin.value = true
+  } else {
+    isAdmin.value = false
   }
 })
 
@@ -489,9 +539,7 @@ const signUp = () => {
         }
       })
       .then((res) => {
-        if (res.status === 200) {
-          loggedIn.value = true
-        }
+        console.log(res)
       })
   } catch (error) {
     console.error(error)
@@ -499,6 +547,39 @@ const signUp = () => {
   signUpModal.close()
 }
 
+const deleteUser = () => {
+  const email = document.querySelector('#deleteid').value
+  const password = document.querySelector('#deletepw').value
+  // const data = {
+  //   userId: email,
+  //   userPass: password
+  // }
+  // console.log(data)
+  axios
+    .delete('http://localhost:8080/users', {
+      data: {
+        userId: email,
+        userPass: password
+      },
+      headers: {
+        'Content-Type': `application/json`
+      }
+    })
+    .then((res) => {
+      console.log(res)
+      if (res.data == 1) {
+        const deleteModal = document.querySelector('#deleteModal')
+        deleteModal.close()
+        loggedIn.value = false
+        alert('회원탈퇴가 완료되었습니다!!')
+      } else {
+        alert('이미 탈퇴한 회원이거나 회원정보가 일치하지 않습니다!!')
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+}
 const postApt = () => {
   const postAptModal = document.querySelector('#postAptModal')
   const no = document.querySelector('#aptNo').value
@@ -572,7 +653,7 @@ const updateApt = () => {
     axios
       .put('http://localhost:8080/house', JSON.stringify(saveData), {
         headers: {
-          "Authorization" : localStorage.getItem("Authorization"),
+          Authorization: localStorage.getItem('Authorization'),
           'Content-Type': `application/json`
         }
       })
@@ -587,8 +668,6 @@ const updateApt = () => {
   updateAptModal.close()
 }
 
-
-
 const deleteApt = () => {
   const deleteAptModal = document.querySelector('#deleteAptModal')
   const houseName = document.querySelector('#deleteAptName').value
@@ -600,14 +679,13 @@ const deleteApt = () => {
     axios
       .delete('http://localhost:8080/house', {
         data: {
-          houseName: houseName
-        }, 
+          apartmentname: houseName
+        },
         headers: {
-          "Authorization" : localStorage.getItem("Authorization"),
+          Authorization: localStorage.getItem('Authorization'),
           'Content-Type': `application/json`
         }
       })
-      console.log(res)
       .then((res) => {
         if (res.status === 200) {
           console.log(saveData)
@@ -618,7 +696,6 @@ const deleteApt = () => {
   }
   deleteAptModal.close()
 }
-
 
 const goHome = () => {
   router.push('/')
@@ -667,6 +744,7 @@ const login = () => {
 
 const logout = () => {
   loggedIn.value = false
+  isAdmin.value = false
   const data = null
   try {
     axios

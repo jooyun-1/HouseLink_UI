@@ -1,5 +1,6 @@
 <script setup>
 import Header from '../components/Header.vue'
+import Footer from '../components/Footer.vue'
 import { ref } from 'vue'
 import KakaoMap from './KakaoMap.vue'
 import router from '../router'
@@ -125,7 +126,9 @@ const updateSearchResult = (aparts) => {
     pricetitle.className = 'text-indigo-800 font-medium mr-[10px]'
     priceP.appendChild(pricetitle)
     const pricespan = document.createElement('span')
-    pricespan.textContent = price + '만원'
+    const tempPrice = price.replace(',', '')
+    const dealtoMillion = Number(tempPrice) / 10 ** 4
+    pricespan.textContent = dealtoMillion + '억'
     priceP.appendChild(pricespan)
     cardbody.appendChild(priceP)
 
@@ -251,6 +254,7 @@ const updateSearchResult = (aparts) => {
       </div>
     </dialog>
   </div>
+  <Footer />
 </template>
 
 <style scoped></style>

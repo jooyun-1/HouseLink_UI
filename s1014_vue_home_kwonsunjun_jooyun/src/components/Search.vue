@@ -55,7 +55,6 @@ const gugunChange = (clickedGuGun) => {
 }
 
 const search = () => {
-
   const gugunSel = document.querySelector('#gugun')
   const regCode = gugunSel[gugunSel.selectedIndex].value.substr(0, 5)
 
@@ -81,8 +80,8 @@ const search = () => {
     .catch((err) => {
       console.log(err)
     })
-  }
-  
+}
+
 const updateSearchResult = (aparts) => {
   document.getElementById('search-result').innerHTML = ''
   // for (let key in aparts) {
@@ -166,7 +165,6 @@ const updateSearchResult = (aparts) => {
         }
         map.panTo(moveLocation)
       })
-
     }
 
     const floorspan = document.createElement('span')
@@ -188,7 +186,9 @@ const updateSearchResult = (aparts) => {
     pricetitle.className = 'text-indigo-800 font-medium mr-[10px]'
     priceP.appendChild(pricetitle)
     const pricespan = document.createElement('span')
-    pricespan.textContent = price + '만원'
+    const tempPrice = price.replace(',', '')
+    const dealtoMillion = Number(tempPrice) / 10 ** 4
+    pricespan.textContent = dealtoMillion + '억'
     priceP.appendChild(pricespan)
     cardbody.appendChild(priceP)
 
